@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="learningspringbatch@localhost">
+  <database-model serializer="dbm" rdbms="MYSQL" format-version="4.0">
+    <root id="1"/>
+    <schema id="2" parent="1" name="learningspringbatch">
+      <Current>1</Current>
+      <Visible>1</Visible>
+    </schema>
+    <schema id="3" parent="1" name="accounts"/>
+    <schema id="4" parent="1" name="customers"/>
+    <schema id="5" parent="1" name="epaye"/>
+    <schema id="6" parent="1" name="epaye_tf"/>
+    <schema id="7" parent="1" name="epaye_tu"/>
+    <schema id="8" parent="1" name="information_schema"/>
+    <schema id="9" parent="1" name="jpa_onetomany"/>
+    <schema id="10" parent="1" name="mysql"/>
+    <schema id="11" parent="1" name="new"/>
+    <schema id="12" parent="1" name="new_customers"/>
+    <schema id="13" parent="1" name="new_jpa_onetomany"/>
+    <schema id="14" parent="1" name="new_newjpaonetomany"/>
+    <schema id="15" parent="1" name="performance_schema"/>
+    <schema id="16" parent="1" name="springbatch"/>
+    <schema id="17" parent="1" name="springdata"/>
+    <schema id="18" parent="1" name="spring_batch"/>
+    <schema id="19" parent="1" name="sys"/>
+    <schema id="20" parent="1" name="testbatch"/>
+    <schema id="21" parent="1" name="test_spring"/>
+  </database-model>
+</dataSource>
