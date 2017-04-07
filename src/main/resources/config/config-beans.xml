@@ -36,6 +36,11 @@
 
     </bean>
 
+   <!-- <jdbc:initialize-database data-source="dataSource">
+        <jdbc:script location="org/springframework/batch/core/schema-drop-mysql.sql" />
+        <jdbc:script location="org/springframework/batch/core/schema-mysql.sql" />
+    </jdbc:initialize-database>-->
+
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="packagesToScan" value="io.spring.batch"/>
 
