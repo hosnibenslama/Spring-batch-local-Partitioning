@@ -57,14 +57,14 @@
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
-    <job id="jobExport" xmlns="http://www.springframework.org/schema/batch">
+  <!--  <job id="jobExport" xmlns="http://www.springframework.org/schema/batch">
 
         <step id="exportStep">
             <partition step="slaveStep1" partitioner="exportPartitioner">
                 <handler grid-size="4" task-executor="batchTaskExecutor" />
             </partition>
         </step>
-    </job>
+    </job>-->
 
 
 

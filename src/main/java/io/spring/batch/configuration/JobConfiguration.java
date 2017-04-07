@@ -81,13 +81,13 @@ public class JobConfiguration {
 	private DataSource dataSource;
 
 	@Bean
-	public Partitioner importPartitioner(){
+	public Partitioner importPartitioner() {
 		CustomMultiResourcePartitioner partitioner = new CustomMultiResourcePartitioner();
 		Resource[] resources;
 		try {
 			resources = resourcePatternResolver.getResources("file:src/main/resources/data/*.xml");
 		} catch (IOException e) {
-			throw new RuntimeException("I/O problems when resolving the input file pattern.",e);
+			throw new RuntimeException("I/O problems when resolving the input file pattern.", e);
 		}
 		partitioner.setResources(resources);
 		return partitioner;
@@ -96,8 +96,8 @@ public class JobConfiguration {
 	@Bean
 	@StepScope
 	public StaxEventItemReader<Customer> CustomerItemReader(
-			@Value("#{stepExecutionContext['resourceName']}")String file
-	)  {
+			@Value("#{stepExecutionContext['resourceName']}") String file
+	) {
 		XStreamMarshaller unmarshaller = new XStreamMarshaller();
 
 		Map<String, Class> aliases = new HashMap<>();
@@ -109,7 +109,7 @@ public class JobConfiguration {
 		StaxEventItemReader<Customer> reader = new StaxEventItemReader<>();
 
 
-		reader.setResource(new ClassPathResource("data/"+file));
+		reader.setResource(new ClassPathResource("data/" + file));
 
 		reader.setFragmentRootElementName("customer");
 		reader.setUnmarshaller(unmarshaller);
@@ -118,33 +118,31 @@ public class JobConfiguration {
 	}
 
 
+	@Bean
+	public JdbcBatchItemWriter<Customer> customerItemWriterImport() {
+
+		JdbcBatchItemWriter<Customer> itemWriter = new JdbcBatchItemWriter<>();
 
 
-    @Bean
-    public JdbcBatchItemWriter<Customer> customerItemWriterImport() {
+		itemWriter.setDataSource(this.dataSource);
+		itemWriter.setSql("INSERT INTO CUSTOMER VALUES (:i, :f, :l, :b)");
 
-        JdbcBatchItemWriter<Customer> itemWriter = new JdbcBatchItemWriter<>();
+		itemWriter.afterPropertiesSet();
 
+		itemWriter.setItemSqlParameterSourceProvider(item -> {
+			Map<String, Object> params = new HashMap<>();
+			params.put("i", item.getId());
+			params.put("f", item.getFirstName());
+			params.put("l", item.getLastName());
+			params.put("b", item.getBirthdate());
+			return new MapSqlParameterSource(params);
+		});
 
-        itemWriter.setDataSource(this.dataSource);
-        itemWriter.setSql("INSERT INTO CUSTOMER VALUES (:i, :f, :l, :b)");
+		return itemWriter;
 
-        itemWriter.afterPropertiesSet();
+	}
 
-        itemWriter.setItemSqlParameterSourceProvider(item -> {
-            Map<String, Object> params = new HashMap<>();
-            params.put("i", item.getId());
-            params.put("f", item.getFirstName());
-            params.put("l", item.getLastName());
-            params.put("b", item.getBirthdate());
-            return new MapSqlParameterSource(params);
-        });
-
-        return itemWriter;
-
-    }
-
-    @Bean
+	@Bean
 	public Step ImportStep() throws Exception {
 		return stepBuilderFactory.get("step1")
 				.partitioner(slaveStep().getName(), importPartitioner())
@@ -154,18 +152,18 @@ public class JobConfiguration {
 	}
 
 
-    @Bean
-    public TaskExecutor batchTaskExecutor() {
-        ThreadPoolTaskExecutor batchTaskExecutor = new ThreadPoolTaskExecutor();
+	@Bean
+	public TaskExecutor batchTaskExecutor() {
+		ThreadPoolTaskExecutor batchTaskExecutor = new ThreadPoolTaskExecutor();
 
-        batchTaskExecutor.setCorePoolSize(10);
-        batchTaskExecutor.setMaxPoolSize(10);
+		batchTaskExecutor.setCorePoolSize(10);
+		batchTaskExecutor.setMaxPoolSize(10);
 		batchTaskExecutor.afterPropertiesSet();
 
-        return batchTaskExecutor;
-    }
+		return batchTaskExecutor;
+	}
 
-    @Bean
+	@Bean
 	public Step slaveStep() {
 		return stepBuilderFactory.get("slaveStep")
 				.<Customer, Customer>chunk(100000)
@@ -175,7 +173,7 @@ public class JobConfiguration {
 
 	}
 
-    @Bean
+	@Bean
 	public Job jobImport() throws Exception {
 
 		return jobBuilderFactory.get("jobImport")
@@ -200,8 +198,8 @@ public class JobConfiguration {
 	@Bean
 	@StepScope
 	public JdbcPagingItemReader<Customer> pagingItemReader(
-			@Value("#{stepExecutionContext['minValue']}")Long minValue,
-			@Value("#{stepExecutionContext['maxValue']}")Long maxValue
+			@Value("#{stepExecutionContext['minValue']}") Long minValue,
+			@Value("#{stepExecutionContext['maxValue']}") Long maxValue
 	) {
 
 		JdbcPagingItemReader<Customer> reader = new JdbcPagingItemReader<>();
@@ -228,12 +226,11 @@ public class JobConfiguration {
 	}
 
 
-
 	@Bean
 	@StepScope
 	public StaxEventItemWriter<Customer> customerItemWriter(
 
-			@Value("#{stepExecutionContext['ressource']}")Object ressource
+			@Value("#{stepExecutionContext['ressource']}") Object ressource
 
 	) {
 
@@ -242,9 +239,9 @@ public class JobConfiguration {
 		itemWriter.setRootTagName("customers");
 		itemWriter.setMarshaller(marshaller());
 
-		File file = new File("./src/main/resources/data/"+ressource+".xml");
+		File file = new File("./src/main/resources/data/" + ressource + ".xml");
 
-		String customerOutputPath=file.getAbsolutePath();
+		String customerOutputPath = file.getAbsolutePath();
 
 		itemWriter.setResource(new FileSystemResource(customerOutputPath));
 
@@ -277,7 +274,6 @@ public class JobConfiguration {
 	}
 
 
-
 	@Bean
 	public Step slaveStep1() {
 		return stepBuilderFactory.get("slaveStep")
@@ -287,7 +283,7 @@ public class JobConfiguration {
 				.build();
 	}
 
-    @Bean
+	@Bean
 	public Job jobExport() throws Exception {
 
 		return jobBuilderFactory.get("jobExport")
@@ -295,3 +291,4 @@ public class JobConfiguration {
 				.start(exportStep())
 				.build();
 	}
+}
