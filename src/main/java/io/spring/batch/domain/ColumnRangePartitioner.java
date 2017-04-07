@@ -96,6 +96,7 @@ public class ColumnRangePartitioner implements Partitioner {
 
 			value.putString("ressource",partition);
 
+
 			start += targetSize;
 			end += targetSize;
 			number++;

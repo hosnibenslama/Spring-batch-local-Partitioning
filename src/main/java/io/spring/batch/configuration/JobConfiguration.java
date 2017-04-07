@@ -287,7 +287,7 @@ public class JobConfiguration {
 				.build();
 	}
 
-	@Bean
+    @Bean
 	public Job jobExport() throws Exception {
 
 		return jobBuilderFactory.get("jobExport")
@@ -295,4 +295,3 @@ public class JobConfiguration {
 				.start(exportStep())
 				.build();
 	}
-}
